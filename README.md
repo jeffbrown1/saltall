@@ -1,0 +1,2 @@
+# saltall
+salt script
