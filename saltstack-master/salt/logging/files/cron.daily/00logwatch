@@ -2,4 +2,4 @@
 
 test -x /usr/share/logwatch/scripts/logwatch.pl || exit 0
 
-/usr/sbin/logwatch --mailto simpleweblogic@gmail.com
+/usr/sbin/logwatch --mailto jeffrey.brown86@@gmail.com

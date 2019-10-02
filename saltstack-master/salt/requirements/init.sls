@@ -2,6 +2,19 @@ essential-packages:
   pkg.installed:
     - pkgs:
       - bash
+      - besagent
+      - llcertsso
+      - encase
+      - splunkforwarder
+      - isecesp
+      - isecespaac
+      - isecespfileaccess
+      - isecgrt
+      - isecrt
+      - isectp
+      - maprovision
+      - mfecma
+      - mfert
       - vim-nox
       - build-essential
       - git
