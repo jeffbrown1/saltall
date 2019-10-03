@@ -4,4 +4,3 @@ base:
     - users
     - ssh
     - logging
-    - pillar
