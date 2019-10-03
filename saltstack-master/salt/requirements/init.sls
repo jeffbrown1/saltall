@@ -28,5 +28,4 @@ essential-packages:
       - htop
       - python-software-properties
       - software-properties-common
-      - apache2-utils
       - imagemagick

@@ -3,7 +3,7 @@ tighten_ssh:
       - name: /etc/ssh/sshd_config
       - source: salt://ssh/files/sshd_config
 
-restart_ssh:
+restart_sshd:
   service.running:
     - name: sshd
     - enable: True
