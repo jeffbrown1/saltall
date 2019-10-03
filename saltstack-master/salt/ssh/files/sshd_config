@@ -25,7 +25,7 @@ LogLevel INFO
 
 # Authentication:
 LoginGraceTime 120
-PermitRootLogin no 
+PermitRootLogin no
 StrictModes yes
 
 RSAAuthentication yes
@@ -50,7 +50,7 @@ ChallengeResponseAuthentication no
 
 # Change to no to disable tunnelled clear text passwords
 PasswordAuthentication no
-AllowUsers justin
+AllowUsers Jeff
 # Kerberos options
 #KerberosAuthentication no
 #KerberosGetAFSToken no
