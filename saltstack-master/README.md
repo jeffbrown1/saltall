@@ -1,2 +1,2 @@
 # saltstack
-Simple Salt Stack example.  Used to deploy the simpleweblogic.com website, to be used as an example to get you started with salt stack.
+this is for the base system requirements needed By ISD for a LLan compatible system
