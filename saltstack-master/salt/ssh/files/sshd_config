@@ -49,8 +49,8 @@ PermitEmptyPasswords no
 ChallengeResponseAuthentication no
 
 # Change to no to disable tunnelled clear text passwords
-PasswordAuthentication no
-AllowUsers Jeff
+PasswordAuthentication yes
+AllowUsers Jeff, g59admin
 # Kerberos options
 #KerberosAuthentication no
 #KerberosGetAFSToken no
