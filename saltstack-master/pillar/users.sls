@@ -22,8 +22,6 @@ users:
     groups:
       - sudo
       - adm
-      - dip
-      - plugdev
       - wheel
         user_files:
       enabled: true
