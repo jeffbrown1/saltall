@@ -1,4 +1,4 @@
 configure_bashrc:
   file.managed:
-    - name: home/g59admin/.bashrc
+    - name: home/root/.bashrc
     - source: salt://bashrc/files/.bashrc
