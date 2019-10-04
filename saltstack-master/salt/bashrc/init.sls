@@ -1,4 +1,4 @@
 configure_bashrc:
   file.managed:
-    - name: /home/root/
+    - name: /home/root/.bashrc
     - source: salt://bashrc/files/.bashrc
