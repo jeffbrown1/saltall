@@ -9,8 +9,8 @@ users:
       - sudo
       - adm
       - wheel
-        user_files:
-           enabled: true
+    user_files:
+      enabled: true
 
   g59admin:
     fullname: g59admin
@@ -21,7 +21,7 @@ users:
       - sudo
       - adm
       - wheel
-        user_files:
+    user_files:
       enabled: true
 
   test:
@@ -33,5 +33,5 @@ users:
       - sudo
       - adm
       - wheel
-        user_files:
+    user_files:
       enabled: true
