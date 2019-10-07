@@ -8,16 +8,14 @@ users:
     groups:
       - sudo
       - adm
-      - dip
-      - plugdev
       - wheel
         user_files:
-      enabled: true
+           enabled: true
 
   g59admin:
     fullname: g59admin
     uid: 1006
-    shell: /bin/sh
+    shell: /bin/zsh
     password: $6$UWuChj4TXgWiW8th$neV9qhZTcLbOt6vqaTINjMi9CgG56vdBxUvJJDhXwBlVrOS2is47MyZbgZZxN/ciGjUAQBVSDMkKXNqQruL6W0::0:99999:7
     groups:
       - sudo
@@ -29,7 +27,7 @@ users:
   test:
     fullname: test
     uid: 1007
-    shell: /bin/sh
+    shell: /bin/zsh
     password: $6$UWuChj4TXgWiW8th$neV9qhZTcLbOt6vqaTINjMi9CgG56vdBxUvJJDhXwBlVrOS2is47MyZbgZZxN/ciGjUAQBVSDMkKXNqQruL6W0::0:99999:7
     groups:
       - sudo
