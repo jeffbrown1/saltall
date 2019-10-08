@@ -1,4 +1,4 @@
-{% for user in pillar['users'] %}
+{% for user in pillar ['users'] %}
 user_{{user.name}}:
   group.present:
     - name: {{user.name}}
