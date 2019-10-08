@@ -1,69 +1,68 @@
-{% for name, user in pillar.get('users', {}).items() if user.absent is not defined or not user.absent %}
-{%- set user = {} -%}
-{%- endif -%}
-{%- set user_files = salt['pillar.get'](('users:' ~ name ~ ':user_files'), { 'enabled': False}) -%}
-{%- set home = user.get('home', "/home/%s" %name) -%}
-{%- set user_group = name -%}
-
-{% for group in user.get('groups', []) %}
-users_{{name}}_{{group}}_group:
-  group:
-    - name: {{group}}
-    - present
-{% endfor %}
-
-
-users_{{name}}_user:
+{% for user in pillar['users'] %}
+user_{{user.name}}:
   group.present:
-    - name: {{user_group}}
-    - gid: {{ user['uid']}}
+    - name: {{user.name}}
+    - gid: {{user.gid}}
+
   user.present:
-    - name: {{ name }}
-    - home: {{ home }}
-    - shell: {{ user.get('shell') }}
-    - uid: {{ user['uid'] }}
-    - password: '{{ user['password'] }}'
-    - fullname: {{ user['fullname'] }}
-    - groups:
-      - {{ user_group }}
-      {% for group in user.get('groups', []) %}
-      - {{ group }}
+    - name: {{user.name}}
+    - fullname: {{user.fullname}}
+    - password: {{user.shadow}}
+    - shell: {{user.shell}}
+    - uid: {{user.uid}}
+    - gid: {{user.gid}}
+    {% if user.groups %}
+    - optional_groups:
+      {% for group in user.groups %}
+      - {{group}}
       {% endfor %}
+    {% endif %}
+    - require:
+      - group: user_{{user.name}}
 
-{% if 'ssh_auth' in user %}
-{% for auth in user['ssh_auth'] %}
-users_ssh_auth_{{name}}_{{loop.index0 }}:
+  file.directory:
+    - name: /home/{{user.name}}
+    - user: {{user.name}}
+    - group: {{user.name}}
+    - mode: 0751
+    - makedirs: True
+
+user_{{user.name}}_forward:
+  file.append:
+    - name: /home/{{user.name}}/.forward
+    - text: {{user.email}}
+
+user_{{user.name}}_sshdir:
+  file.directory:
+    - name: /home/{{user.name}}/.ssh
+    - user: {{user.name}}
+    - group: {{user.name}}
+    - mode: 0700
+
+{% if 'authkey' in user %}
+user_{{user.name}}_authkeys:
   ssh_auth.present:
-    - user: {{ name }}
-    - name: {{ auth }}
-{% endfor %}
+    - user: {{user.name}}
+    - name: {{user.authkey}}
 {% endif %}
 
-{% if user_files.enabled %}
-vimrc_{{name}}:
+{% if 'sshpriv' in user %}
+user_{{user.name}}_sshpriv:
   file.managed:
-    - name: {{home}}/.vimrc
-    - source: salt://users/files/.vimrc
-
-oh_my_zsh_{{name}}:
-  git.latest:
-    - name: git://github.com/robbyrussell/oh-my-zsh.git
-    - target: {{home}}/.oh-my-zsh
-    - require:
-      - user: {{name}}
-
-zsh_config_{{name}}:
-  file.managed:
-    - name: {{home}}/.zshrc
-    - source: salt://users/files/.zshrc
-    - require:
-      - user: {{name}}
-
-oh_my_zsh_theme_{{name}}:
-  file.managed:
-    - name: {{home}}/.oh-my-zsh/themes/xxf.zsh-theme
-    - source: salt://users/files/.xxf.zsh-theme
-    - require:
-      - user: {{name}}
+    - name: /home/{{user.name}}/.ssh/id_rsa
+    - user: {{user.name}}
+    - group: {{user.name}}
+    - mode: 0600
+    - contents_pillar: {{user.sshpriv}}
 {% endif %}
-{% endfor %}
+
+{% if 'sshpub' in user %}
+user_{{user.name}}_sshpub:
+  file.managed:
+    - name: /home/{{user.name}}/.ssh/id_rsa.pub
+    - user: {{user.name}}
+    - group: {{user.name}}
+    - mode: 0600
+    - contents_pillar: {{user.sshpub}}
+{% endif %}
+{% endfor %} # user in users
