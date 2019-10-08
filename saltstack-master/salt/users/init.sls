@@ -9,9 +9,9 @@ sift-user-{{ user }}:
 sift-user-{{ user }}:
   user.present:
     - name: {{ user }}
-    - fullname: SANS Forensics
+    - fullname: jeffbrown
     - shell: /bin/bash
     - home: /home/{{ user }}
-    - password: $6$7n5jpcUZ$oh6U9W9mWKbtgIcY8y4buQZR3XMBOU2xUi4xGH9kvcB9o4IIsFLZ/.ffhqqVI0gkVchcJf3RSLxQhpgwXgmBR/
+    - password: $6$kolxRSPepa3vXCRs$XqO3KPEEPil4WdIawP4ALrHGjgZLLqf9oEDZETDzmvfNUc8O3X2YQHYZutfCJIRWHKEAoZ53AFAoS1pOCuw7S.:18088:0:99999:7
     - gid_from_name: True
 {%- endif %}
