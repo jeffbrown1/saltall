@@ -1,4 +1,4 @@
-{%- set user = salt['pillar.get']('sift_user', 'sansforensics') -%}
+{%- set user = salt['pillar.get']('hello_', 'new') -%}
 {%- set all_users = salt['user.list_users']() -%}
 {%- if user in all_users -%}
 sift-user-{{ user }}:
