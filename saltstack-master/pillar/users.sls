@@ -33,7 +33,7 @@ g59admin:
     enabled: true
 
 test:
-  fullname: test
+  fullname: tester
   uid: 1004
   shell: /bin/zsh
   password: $6$UWuChj4TXgWiW8th$neV9qhZTcLbOt6vqaTINjMi9CgG56vdBxUvJJDhXwBlVrOS2is47MyZbgZZxN/ciGjUAQBVSDMkKXNqQruL6W0::0:99999:7
