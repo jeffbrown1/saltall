@@ -1,68 +1,116 @@
-{% for user in pillar ['users'] %}
-user_{{user.name}}:
+{%- from "linux/map.jinja" import system with context %}
+{%- if system.enabled %}
+include:
+  - linux.system.group
+{%- for name, user in system.user.items() %}
+{%- if user.enabled %}
+{%- set requires = [] %}
+{%- for group in user.get('groups', []) %}
+  {%- if group in system.get('group', {}).keys() %}
+    {%- do requires.append({'group': 'system_group_'+group}) %}
+  {%- endif %}
+{%- endfor %}
+{%- if user.gid is not defined %}
+
+system_group_{{ name }}:
   group.present:
-    - name: {{user.name}}
-    - gid: {{user.gid}}
+  - name: {{ name }}
+  - require_in:
+    - user: system_user_{{ name }}
+{%- endif %}
+{%- if user.get('makedirs') %}
 
+system_user_home_parentdir_{{ user.home }}:
+  file.directory:
+  - name: {{ user.home | path_join("..") }}
+  - makedirs: true
+  - require_in:
+    - user: system_user_{{ name }}
+{%- endif %}
+
+system_user_{{ name }}:
   user.present:
-    - name: {{user.name}}
-    - fullname: {{user.fullname}}
-    - password: {{user.shadow}}
-    - shell: {{user.shell}}
-    - uid: {{user.uid}}
-    - gid: {{user.gid}}
-    {% if user.groups %}
-    - optional_groups:
-      {% for group in user.groups %}
-      - {{group}}
-      {% endfor %}
-    {% endif %}
-    - require:
-      - group: user_{{user.name}}
+  - name: {{ name }}
+  - home: {{ user.home }}
+  {% if user.get('password') == False %}
+  - enforce_password: false
+  {% elif user.get('password') == None %}
+  - enforce_password: true
+  - password: '*'
+  {% elif user.get('password') %}
+  - enforce_password: true
+  - password: {{ user.password }}
+  - hash_password: {{ user.get('hash_password', False) }}
+  {% endif %}
+  {%- if user.gid is defined and user.gid %}
+  - gid: {{ user.gid }}
+  {%- else %}
+  - gid_from_name: true
+  {%- endif %}
+  {%- if user.groups is defined %}
+  - groups: {{ user.groups }}
+  {%- endif %}
+  {%- if user.system is defined and user.system %}
+  - system: True
+  - shell: {{ user.get('shell', '/bin/false') }}
+  {%- else %}
+  - shell: {{ user.get('shell', '/bin/bash') }}
+  {%- endif %}
+  {%- if user.uid is defined and user.uid %}
+  - uid: {{ user.uid }}
+  {%- endif %}
+  {%- if user.unique is defined %}
+  - unique: {{ user.unique }}
+  {%- endif %}
+  {%- if user.maxdays is defined %}
+  - maxdays: {{ user.maxdays }}
+  {%- endif %}
+  {%- if user.mindays is defined %}
+  - mindays: {{ user.mindays }}
+  {%- endif %}
+  {%- if user.warndays is defined %}
+  - warndays: {{ user.warndays }}
+  {%- endif %}
+  {%- if user.inactdays is defined %}
+  - inactdays: {{ user.inactdays }}
+  {%- endif %}
+  - require: {{ requires|yaml }}
 
+system_user_home_{{ user.home }}:
   file.directory:
-    - name: /home/{{user.name}}
-    - user: {{user.name}}
-    - group: {{user.name}}
-    - mode: 0751
-    - makedirs: True
+  - name: {{ user.home }}
+  - user: {{ name }}
+  - mode: {{ user.get('home_dir_mode', 700) }}
+  - makedirs: true
+  - require:
+    - user: system_user_{{ name }}
+{%- if user.get('sudo', False) %}
 
-user_{{user.name}}_forward:
-  file.append:
-    - name: /home/{{user.name}}/.forward
-    - text: {{user.email}}
-
-user_{{user.name}}_sshdir:
-  file.directory:
-    - name: /home/{{user.name}}/.ssh
-    - user: {{user.name}}
-    - group: {{user.name}}
-    - mode: 0700
-
-{% if 'authkey' in user %}
-user_{{user.name}}_authkeys:
-  ssh_auth.present:
-    - user: {{user.name}}
-    - name: {{user.authkey}}
-{% endif %}
-
-{% if 'sshpriv' in user %}
-user_{{user.name}}_sshpriv:
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
   file.managed:
-    - name: /home/{{user.name}}/.ssh/id_rsa
-    - user: {{user.name}}
-    - group: {{user.name}}
-    - mode: 0600
-    - contents_pillar: {{user.sshpriv}}
-{% endif %}
-
-{% if 'sshpub' in user %}
-user_{{user.name}}_sshpub:
-  file.managed:
-    - name: /home/{{user.name}}/.ssh/id_rsa.pub
-    - user: {{user.name}}
-    - group: {{user.name}}
-    - mode: 0600
-    - contents_pillar: {{user.sshpub}}
-{% endif %}
-{% endfor %} # user in users
+  - source: salt://linux/files/sudoer
+  - template: jinja
+  - user: root
+  - group: root
+  - mode: 440
+  - defaults:
+    user_name: {{ name }}
+  - require:
+    - user: system_user_{{ name }}
+  - check_cmd: /usr/sbin/visudo -c -f
+{%- else %}
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
+  file.absent
+{%- endif %}
+{%- else %}
+system_user_{{ name }}:
+  user.absent:
+  - name: {{ name }}
+system_user_home_{{ user.home }}:
+  file.absent:
+  - name: {{ user.home }}
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
+  file.absent
+{%- endif %}
+{%- endfor %}
+{%- endif %}
