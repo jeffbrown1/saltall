@@ -6,7 +6,7 @@ sift-user-{{ user }}:
     - name: {{ user }}
     - home: /home/{{ user }}
 {%- else %}
-sift-user-{{ user }}:
+new-user-{{ user }}:
   user.present:
     - name: {{ user }}
     - fullname: jeffbrown
