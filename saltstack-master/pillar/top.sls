@@ -1,3 +1,4 @@
 base:
   '*':
-    - users
+    - users.admins
+    - users.revokedusers
