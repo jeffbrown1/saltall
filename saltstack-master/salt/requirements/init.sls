@@ -13,7 +13,6 @@ essential-packages:
       - isecrt
       - isectp
       - maprovision
-      - mfecma
       - mfert
       - vim-nox
       - zsh
