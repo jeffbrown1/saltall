@@ -62,12 +62,3 @@
       {% endfor %}
 {% endif %}
 {% endfor %}
-
-# Allow sudoers to sudo without passwords.
-# This is to avoid having to manage passwords in addition to keys
-/etc/sudoers.d/sudonopasswd:
-  file.managed:
-    - source: salt://users/files/sudoers.d/sudonopasswd
-    - user: root
-    - group: root
-    - mode: 440
